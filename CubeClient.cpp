@@ -2,8 +2,14 @@
 
 #include <Arduino.h>
 #include "ESP8266WiFi.h"
+#include <ESP8266HTTPClient.h>
 
-CubeClient::CubeClient(const char* ssid_, const char* password_) : ssid(ssid_), password(password_)
+CubeClient::CubeClient(
+  const char* ssid_,
+  const char* password_,
+  String url_,
+  String apiKey_
+  ) : ssid(ssid_), password(password_), url(url_), apiKey(apiKey_)
 {
 
 }
@@ -22,4 +28,16 @@ void CubeClient::connect() {
   Serial.println("WiFi connection Successful");
   Serial.print("The IP Address of ESP8266 Module is: ");
   Serial.print(WiFi.localIP());// Print the IP address
+}
+
+void CubeClient::send() {
+  HTTPClient http;
+  http.begin(url + "/api/events");
+  http.addHeader("Content-Type", "application/json");
+  http.addHeader("Authorization", "Bearer " + apiKey);
+  int httpCode = http.POST("{\"user\": \"papipl\",\"activity\": \"Break\",\"productivityRate\": 2}");
+  Serial.println(httpCode);
+  String payload = http.getString();
+  Serial.println(payload);
+  http.end();
 }
