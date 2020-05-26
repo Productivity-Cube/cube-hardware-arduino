@@ -7,6 +7,7 @@ class SideChecker {
     SideChecker(const int numberOfSides);
     void init();
     int getSide();
+    int getChangedSide();
     
     int whichBucket(int n);
     

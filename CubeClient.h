@@ -7,7 +7,7 @@ class CubeClient {
   public:
     CubeClient(const char* ssid, const char* password, String url_, String apiKey_);
     void connect();
-    void send();
+    double send(int side, int productivityRate);
     
   private:
     const char* ssid;

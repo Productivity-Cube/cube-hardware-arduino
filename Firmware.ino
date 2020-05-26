@@ -10,12 +10,12 @@
 #include "conf.h"
 
 // Pin Definitions
-#define PUSHBUTTON_1_PIN_2	D3
-#define PUSHBUTTON_2_PIN_2	D8
-#define PUSHBUTTON_3_PIN_2	D0
-#define RGBLED_PIN_R  D5 
-#define RGBLED_PIN_G  D7 
-#define RGBLED_PIN_B	D6 
+#define PUSHBUTTON_1_PIN_2	D0
+#define PUSHBUTTON_2_PIN_2	D3
+#define PUSHBUTTON_3_PIN_2	D8
+#define RGBLED_PIN_R  D7
+#define RGBLED_PIN_G  D6
+#define RGBLED_PIN_B	D5
 
 // Global variables and defines
 #define rgbLed_TYPE COMMON_ANODE
@@ -40,16 +40,22 @@ void setup()
   Serial.begin(9600);
   while (!Serial);
   Serial.println("start");
+  rgbLed.setRGB(20, 0, 0);
+  delay(2000);
+  rgbLed.setRGB(0, 20, 0);
+  delay(2000);
+  rgbLed.setRGB(0, 0, 20);
+  delay(2000);
 
   pushButton_1.init();
   pushButton_2.init();
   pushButton_3.init();
   rgbLed.turnOff();
 
-  rgbLed.setRGB(0,20,0);
+  rgbLed.setRGB(20, 0, 0);
   cubeClient.connect();
-  
-  rgbLed.setRGB(0,0,20);
+
+  rgbLed.setRGB(0, 20, 0);
   delay(1000);
   rgbLed.turnOff();
 }
@@ -57,21 +63,35 @@ void setup()
 
 void loop()
 {
-  sideChecker.getSide();
+  int side = sideChecker.getChangedSide();
+  double prediction = 0;
+  if (side != -1) {
+    Serial.print("Side:");
+    Serial.println(side);
+    prediction = cubeClient.send(sideChecker.getSide(), NULL);
+  }
+
   if (pushButton_1.onPress() == 1) {
-    cubeClient.send();
-    rgbLed.setRGB(255,0,0);
-    delay(400);
-    rgbLed.turnOff();
+    prediction = cubeClient.send(sideChecker.getSide(), 2);
   }
   if (pushButton_2.onPress() == 1) {
-    rgbLed.setRGB(0,255,0);
-    delay(400);
-    rgbLed.turnOff();
+    prediction = cubeClient.send(sideChecker.getSide(), 3);
   }
   if (pushButton_3.onPress() == 1) {
-    rgbLed.setRGB(0,0, 255);
-    delay(400);
+    prediction = cubeClient.send(sideChecker.getSide(), 1);
+  }
+
+  // LED
+  if (prediction > 0) {
+    Serial.println(prediction);
+    if (prediction <= 1.6) {
+      rgbLed.setRGB(100, 0, 0);
+    } else if (prediction <= 2.5) {
+      rgbLed.setRGB(0, 0, 100);
+    } else {
+      rgbLed.setRGB(0, 100, 0);
+    }
+    delay (5000);
     rgbLed.turnOff();
   }
 }

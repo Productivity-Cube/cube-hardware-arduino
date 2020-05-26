@@ -27,8 +27,18 @@ void SideChecker::init() {
 
 
 int SideChecker::whichBucket(int n) {
+    int perSide = (360 / this->numberOfSides) / 2;
+    if (355 < n) {
+      return 0;
+    }
+    
     return (n * this->numberOfSides) / 360;
 }
+
+int previousSide = 0;
+unsigned long timeOfSwitchFromLastSide = 0;
+bool wasSwitched = false;
+int timeToAcceptSwitchSide = 5000;
 
 int SideChecker::getSide() {
   Wire.beginTransmission(MPU_addr);
@@ -48,13 +58,33 @@ int SideChecker::getSide() {
    
 //  Serial.print("AngleX= ");
 //  Serial.println(x);
-   
+//   
 //  Serial.print("AngleY= ");
 //  Serial.println(y);
-   
+//   
 //  Serial.print("AngleZ= ");
 //  Serial.println(z);
 //  Serial.println("-----------------------------------------");
 
+  delay(100);
   return whichBucket(y);
+}
+
+int SideChecker::getChangedSide() {
+  int side = getSide();
+
+  if (side != previousSide) {
+    timeOfSwitchFromLastSide = millis();
+    previousSide = side;
+    wasSwitched = false;
+  }
+
+  if (millis() - timeOfSwitchFromLastSide > timeToAcceptSwitchSide && !wasSwitched) {
+    timeOfSwitchFromLastSide = -1;
+    wasSwitched = true;
+
+    return side;
+  }
+
+  return -1;
 }
