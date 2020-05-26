@@ -1,0 +1,4 @@
+#define CONFIG_SSID "wifi name"
+#define CONFIG_PASSWORD "wifi password"
+#define CONFIG_URL "http://192.168.0.102:8000"
+#define CONFIG_API_KEY "e9acd2995c9c7b8889ed0ea9e5a85c0888b983fa6b0e36cf1eab68600cfdcfbca5368de532a378b62a3b17e5227f21f3"
