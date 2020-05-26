@@ -55,6 +55,12 @@ int SideChecker::getSide() {
   x= RAD_TO_DEG * (atan2(-yAng, -zAng)+PI);
   y= RAD_TO_DEG * (atan2(-xAng, -zAng)+PI);
   z= RAD_TO_DEG * (atan2(-yAng, -xAng)+PI);
+
+//  Serial.print(x);
+//  Serial.print(",");
+//  Serial.print(y);
+//  Serial.print(",");
+//  Serial.println(z);
    
 //  Serial.print("AngleX= ");
 //  Serial.println(x);
@@ -65,6 +71,10 @@ int SideChecker::getSide() {
 //  Serial.print("AngleZ= ");
 //  Serial.println(z);
 //  Serial.println("-----------------------------------------");
+
+  if ((x > 70 && x < 100) || (x > 230 && x < 290)) {
+    return this->numberOfSides;
+  }
 
   delay(100);
   return whichBucket(y);

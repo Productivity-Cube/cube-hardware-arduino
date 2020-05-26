@@ -40,13 +40,7 @@ void setup()
   Serial.begin(9600);
   while (!Serial);
   Serial.println("start");
-  rgbLed.setRGB(20, 0, 0);
-  delay(2000);
-  rgbLed.setRGB(0, 20, 0);
-  delay(2000);
-  rgbLed.setRGB(0, 0, 20);
-  delay(2000);
-
+ 
   pushButton_1.init();
   pushButton_2.init();
   pushButton_3.init();
